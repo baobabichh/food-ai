@@ -26,3 +26,4 @@ sudo systemctl restart mysql.service
 
 python3 -m pip config set global.break-system-packages true
 pip install openai
+pip install mysql-connector-python

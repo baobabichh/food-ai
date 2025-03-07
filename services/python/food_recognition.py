@@ -5,11 +5,13 @@ import requests
 import base64
 import os
 from openai import OpenAI
+import mysql.connector
+from mysql.connector import Error
 
-def get_api_key(file_path):
+def get_value_from_cfg_file(file_path, key):
     with open(file_path, 'r') as file:
         data = json.load(file)
-    api_key = data.get('openai_api_key')
+    api_key = data.get(key)
     if api_key is None:
         raise KeyError("API key not found in the JSON file.")
     
@@ -57,7 +59,12 @@ def gpt_request_text_img(key, model, promt, base64_img, img_type):
     return response.choices[0].message.content
 
 img_ext, img_base64 = get_image_ext_base64("/home/goshan9/food-ai/test_data/4.jpg")
-api_key = get_api_key("/home/goshan9/food-ai/credentials.json")
+
+
+
+api_key = get_value_from_cfg_file("/home/goshan9/food-ai/credentials.json", "openai_api_key")
+db_user = get_value_from_cfg_file("/home/goshan9/food-ai/credentials.json", "db_user")
+db_pass = get_value_from_cfg_file("/home/goshan9/food-ai/credentials.json", "db_pass")
 
 promt = ("""
 Write me a report in json format about the food on the photo. Provide name, grams, calories per each product.
@@ -69,9 +76,60 @@ Example:
     {"name": "Cheese", "grams": 50, "calories": 200}
 ]}
 """)
-try:
-    res = gpt_request_text_img(api_key, "gpt-4o", promt, img_base64, img_ext)
-except:
-    res = "Error"
 
-print(res)
+def process_requests():
+    try:
+        # Connect to the MySQL database
+        connection = mysql.connector.connect(
+            host='127.0.0.1',
+            user=db_user,
+            password=db_pass,
+            database='food_ai'
+        )
+
+        if connection.is_connected():
+            cursor = connection.cursor(dictionary=True)
+            
+            print("Successfully connected to the database")
+            query = f"insert into FoodRecognitionRequests(ImgBase64, ImgType, Status, Response) values (%s, %s, %s, %s)"
+            values = (img_base64, img_ext, "1", "",)
+            cursor.execute(query, values)
+
+            query = "select ID, ImgBase64, ImgType FROM FoodRecognitionRequests where Status = 1 limit 100"
+            cursor.execute(query)
+            rows = cursor.fetchall()
+
+            for row in rows:
+                print(f"Updating: {row['ID']}")
+                query = "update FoodRecognitionRequests set Status = 2 where id = %s"
+                values = (row['ID'],)
+                cursor.execute(query, values)
+
+                res_json=""
+                is_error = False
+                try:
+                    res_json = gpt_request_text_img(api_key, "gpt-4o", promt, row["ImgBase64"], row["ImgType"])
+                    is_error = False
+                    print(f"Sucess: {row['ID']}")
+                except:
+                    res_json = "{}"
+                    is_error = True
+                    print(f"Error: {row['ID']}")
+
+                query = "update FoodRecognitionRequests set Response = %s, Status = %s where id = %s"
+                if is_error:
+                    values = (res_json, row['ID'], 3)
+                else:
+                    values = (res_json, row['ID'], 4)
+                cursor.execute(query, values)
+
+    except Error as e:
+        print(f"Error: {e}")
+
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+            print("MySQL connection is closed")
+
+process_requests()
