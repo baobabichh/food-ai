@@ -1,3 +1,4 @@
+import time
 import openai
 import base64
 import json
@@ -19,6 +20,8 @@ def get_value_from_cfg_file(file_path, key):
 
 def get_image_ext_base64(image_path):
     _, extension = os.path.splitext(image_path)
+
+    extension = extension.replace('.', '')
     
     with open(image_path, "rb") as image_file:
         encoded_image = base64.b64encode(image_file.read()).decode('utf-8')
@@ -58,7 +61,7 @@ def gpt_request_text_img(key, model, promt, base64_img, img_type):
 
     return response.choices[0].message.content
 
-img_ext, img_base64 = get_image_ext_base64("/home/goshan9/food-ai/test_data/4.jpg")
+# img_ext, img_base64 = get_image_ext_base64("/home/goshan9/food-ai/test_data/4.jpg")
 
 
 
@@ -79,7 +82,6 @@ Example:
 
 def process_requests():
     try:
-        # Connect to the MySQL database
         connection = mysql.connector.connect(
             host='127.0.0.1',
             user=db_user,
@@ -91,9 +93,10 @@ def process_requests():
             cursor = connection.cursor(dictionary=True)
             
             print("Successfully connected to the database")
-            query = f"insert into FoodRecognitionRequests(ImgBase64, ImgType, Status, Response) values (%s, %s, %s, %s)"
-            values = (img_base64, img_ext, "1", "",)
-            cursor.execute(query, values)
+            # query = f"insert into FoodRecognitionRequests(ImgBase64, ImgType, Status, Response) values (%s, %s, %s, %s)"
+            # values = (img_base64, img_ext, "1", "",)
+            # cursor.execute(query, values)
+            # connection.commit()
 
             query = "select ID, ImgBase64, ImgType FROM FoodRecognitionRequests where Status = 1 limit 100"
             cursor.execute(query)
@@ -104,8 +107,9 @@ def process_requests():
                 query = "update FoodRecognitionRequests set Status = 2 where id = %s"
                 values = (row['ID'],)
                 cursor.execute(query, values)
+                connection.commit()
 
-                res_json=""
+                res_json="none"
                 is_error = False
                 try:
                     res_json = gpt_request_text_img(api_key, "gpt-4o", promt, row["ImgBase64"], row["ImgType"])
@@ -116,12 +120,15 @@ def process_requests():
                     is_error = True
                     print(f"Error: {row['ID']}")
 
+                print(res_json)
+
                 query = "update FoodRecognitionRequests set Response = %s, Status = %s where id = %s"
                 if is_error:
                     values = (res_json, row['ID'], 3)
                 else:
                     values = (res_json, row['ID'], 4)
                 cursor.execute(query, values)
+                connection.commit()
 
     except Error as e:
         print(f"Error: {e}")
@@ -132,4 +139,7 @@ def process_requests():
             connection.close()
             print("MySQL connection is closed")
 
-process_requests()
+
+while True:
+    time.sleep(1)
+    process_requests()
