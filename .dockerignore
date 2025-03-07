@@ -1,0 +1,9 @@
+build/
+*.o
+*.so
+*.a
+*.exe
+*.out
+.git
+.vscode
+.idea
