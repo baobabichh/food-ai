@@ -1,0 +1,44 @@
+# General C++ build files
+*.o
+*.obj
+*.lo
+*.la
+*.al
+*.libs
+*.a
+*.so
+*.so.*
+*.dylib
+*.dll
+*.exe
+*.out
+*.app
+*.ipa
+*.dSYM/
+*.pdb
+
+# CMake build directory
+/build/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+CTestTestfile.cmake
+
+# Compiler-specific files
+*.vcxproj*
+*.sln
+*.ninja
+*.DS_Store
+*.vscode/
+*.idea/
+*.clangd/
+*.ccls-cache/
+compile_commands.json
+
+# Logs and temp files
+*.log
+*.swp
+*.swo
+*.bak
+*~
