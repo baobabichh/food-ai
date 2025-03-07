@@ -1,5 +1,31 @@
+import openai
+import base64
+import json
+import requests
+import base64
+import os
+
+def get_api_key(file_path):
+    with open(file_path, 'r') as file:
+        data = json.load(file)
+    api_key = data.get('openai_api_key')
+    if api_key is None:
+        raise KeyError("API key not found in the JSON file.")
+    
+    return api_key
+
+def get_image_ext_base64(image_path):
+    _, extension = os.path.splitext(image_path)
+    
+    with open(image_path, "rb") as image_file:
+        encoded_image = base64.b64encode(image_file.read()).decode('utf-8')
+    
+    return extension, encoded_image
+
 from openai import OpenAI
-client = OpenAI()
+client = OpenAI(api_key=get_api_key("../../credentials.json"))
+
+img_ext, img_base64 = get_image_ext_base64("/home/goshan9/food-ai/test_data/1.jpg")
 
 response = client.chat.completions.create(
   model="gpt-4o",
@@ -10,27 +36,18 @@ response = client.chat.completions.create(
         {
           "type": "image_url",
           "image_url": {
-            "url": "data:image/jpeg;base64,..."
+            "url": f"data:image/{img_ext};base64,{img_base64}"
           }
         },
         {
           "type": "text",
-          "text": "write me every product on this photo and amount of calories of every product on photo"
+          "text": "how much calories is here? Output in json format as an array of products (name, frams and calories)"
         }
       ]
     },
-    {
-      "role": "assistant",
-      "content": [
-        {
-          "type": "text",
-          "text": "The dish in the photo includes:\n\n1. **Buckwheat Groats:**\n   - Amount: It's hard to determine the exact quantity, but let's assume there's about 1 cup.\n   - Calories: Approximately 155 calories per cup cooked.\n\n2. **Chicken Breast:**\n   - Amount: Approximately 4-5 slices, which could be around 150 grams.\n   - Calories: Approximately 165 calories per 100 grams, so around 247 calories for 150 grams.\n\n3. **Shredded Cheese:**\n   - Amount: Judging visually, there might be about 1/4 cup.\n   - Calories: Approximately 110 calories per 1/4 cup, depending on the type of cheese.\n\nThese are rough estimates. The exact calorie count can vary based on specific quantities and preparation methods."
-        }
-      ]
-    }
   ],
   response_format={
-    "type": "text"
+    "type": "json_object"
   },
   temperature=1,
   max_completion_tokens=2048,
@@ -38,3 +55,5 @@ response = client.chat.completions.create(
   frequency_penalty=0,
   presence_penalty=0
 )
+
+print(response)
