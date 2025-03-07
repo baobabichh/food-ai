@@ -21,6 +21,9 @@ sudo apt install mysql-server
 sudo apt update 
 sudo apt upgrade
 
+sudo service mysql restart
+sudo systemctl restart mysql.service
+
 
 python3 -m pip config set global.break-system-packages true
 pip install openai
