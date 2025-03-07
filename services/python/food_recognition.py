@@ -39,7 +39,7 @@ def gpt_request_text_img(key, model, promt, base64_img, img_type):
                 {
                 "type": "image_url",
                 "image_url": {
-                    "url": f"data:image/{img_ext};base64,{img_base64}"
+                    "url": f"data:image/{img_type};base64,{base64_img}"
                 }
                 },
                 {
@@ -114,7 +114,8 @@ def process_requests():
                     res_json = gpt_request_text_img(api_key, "gpt-4o", promt, row["ImgBase64"], row["ImgType"])
                     is_error = False
                     print(f"Sucess: {row['ID']}")
-                except:
+                except Error as e:
+                    print(f"Error: {e}")
                     res_json = "{}"
                     is_error = True
                     print(f"Error: {row['ID']}")
@@ -123,9 +124,9 @@ def process_requests():
 
                 query = "update FoodRecognitionRequests set Response = %s, Status = %s where id = %s"
                 if is_error:
-                    values = (res_json, row['ID'], 3)
+                    values = (res_json, 3, row['ID'],)
                 else:
-                    values = (res_json, row['ID'], 4)
+                    values = (res_json, 4, row['ID'],)
                 cursor.execute(query, values)
                 connection.commit()
 
