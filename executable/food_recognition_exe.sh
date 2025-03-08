@@ -1,0 +1,1 @@
+python3 /../services/python/food_recognition.py
