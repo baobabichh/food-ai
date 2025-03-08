@@ -28,5 +28,5 @@ cd drogon
 git submodule update --init
 mkdir build
 cd build
-cmake ..
+cmake .. -DMYSQL=ON
 make && sudo make install
