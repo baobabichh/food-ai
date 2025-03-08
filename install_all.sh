@@ -31,3 +31,4 @@ pip install mysql-connector-python
 
 cd libs
 ./install_drogon.sh
+./install_nlohmanjson.sh
