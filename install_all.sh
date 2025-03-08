@@ -24,6 +24,12 @@ sudo apt install -y mysql-server
 sudo apt update 
 sudo apt upgrade
 
+sudo apt-get -y install golang-go 
+sudo apt update 
+sudo apt upgrade
+
+go get github.com/PaulSonOfLars/gotgbot/v2
+
 sudo service mysql restart
 sudo systemctl restart mysql.service
 
@@ -38,3 +44,10 @@ cd $full_libs_path
 
 cd $full_libs_path
 ./install_nlohmanjson.sh
+
+cd $current_dir
+cd services/go
+go mod init telegram_bot
+go get -u github.com/go-telegram-bot-api/telegram-bot-api/v5
+
+cd $current_dir

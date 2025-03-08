@@ -22,3 +22,6 @@ stop_service "food_recognition_exe.sh"
 
 cd "$current_dir/executable"
 stop_service "web_server_exe.sh"
+
+cd "$current_dir/executable"
+stop_service "telegram_bot_exe.sh"

@@ -17,5 +17,8 @@ start_service "food_recognition_exe.sh"
 cd "$current_dir/executable"
 start_service "web_server_exe.sh" 
 
+cd "$current_dir/executable"
+start_service "telegram_bot_exe.sh" 
+
 
 
