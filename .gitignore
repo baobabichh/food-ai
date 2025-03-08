@@ -3,6 +3,8 @@ libs/drogon
 libs/json
 web_server/files/uploads/
 
+web_server/build/
+
 *.sum
 
 # General C++ build files

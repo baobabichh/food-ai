@@ -125,7 +125,7 @@ void FoodRecognitionRequestController::getRequest(const HttpRequestPtr &req, std
                 {"ID", row["ID"].as<std::string>()},
                 {"ImgBase64", row["ImgBase64"].as<std::string>()},
                 {"ImgType", row["ImgType"].as<std::string>()},
-                {"Status", int_to_status[stringToSizeT(row["Status"].as<std::string>())]},
+                {"RequestStatus", int_to_status[stringToSizeT(row["Status"].as<std::string>())]},
                 {"Response", row["Response"].as<std::string>()},
                 {"CreateTS", row["CreateTS"].as<std::string>()},
             });

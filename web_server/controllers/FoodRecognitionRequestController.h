@@ -9,7 +9,7 @@ class FoodRecognitionRequestController : public drogon::HttpController<FoodRecog
 {
   public:
     METHOD_LIST_BEGIN
-    ADD_METHOD_TO(FoodRecognitionRequestController::createRequest, "/createRequest", Get);
+    ADD_METHOD_TO(FoodRecognitionRequestController::createRequest, "/createRequest", Post);
     ADD_METHOD_TO(FoodRecognitionRequestController::checkRequestStatus, "/checkRequestStatus", Get);
     ADD_METHOD_TO(FoodRecognitionRequestController::getRequest, "/getRequest", Get);
     METHOD_LIST_END
