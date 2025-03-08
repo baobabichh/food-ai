@@ -5,6 +5,7 @@ OTHER_PID=0
 cleanup() {
   echo "SIGTERM received. Performing cleanup..."
   kill $OTHER_PID
+  kill 0
   exit 0
 }
 trap cleanup SIGTERM
