@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <link rel="icon" href="food_ai_logo_new.png">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <title>Hello, world!</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-light bg-light">
+        <a class="navbar-brand logo_text" href="index.html">
+            <img src="food_ai_logo_new.png" class="d-inline-block align-top logo_img" alt="">
+            FoodAI
+        </a>
+    </nav>
+
+    <div class="container full-height">
+        <div class="w100">
+            <div class="row">
+                <div class="col-md-4">
+                    <h1 class="mid_text">Email address</h1>
+                </div>
+                <div class="col-md-8">
+                    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                        placeholder="Enter email">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <h1 class="mid_text">Password</h1>
+                </div>
+                <div class="col-md-8">
+                    <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                </div>
+                <div class="col-md-8">
+                    <div class="alert alert-danger" style="display: none;" id="b_error" role="alert">
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                </div>
+                <div class="col-md-8">
+                    <div class="alert alert-success" style="display: none;" id="b_success" role="alert">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <button class="btn btn-primary medium-button" id="registerButton">Register</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function setCookie(name, value, hours) {
+            var expires = "";
+            if (hours) {
+                var date = new Date();
+                date.setTime(date.getTime() + (hours * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "") + expires + "; path=/";
+        }
+        function getCookie(name) {
+            var nameEQ = name + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+
+        function setApiKey(value) {
+            setCookie("apiKey", value, 1);
+        }
+
+        function getApiKey() {
+            return getCookie("apiKey");
+        }
+
+
+
+        async function onRegister() {
+            const email = document.getElementById('exampleInputEmail1').value;
+            const password = document.getElementById('exampleInputPassword1').value;
+            const b_error = document.getElementById('b_error');
+            const b_success = document.getElementById('b_success');
+
+            b_error.style.display = "none";
+            b_success.style.display = "none";
+
+            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+            if (!email || !password) {
+                b_error.style.display = "block";
+                b_error.innerHTML = 'Please enter both email and password.';
+                return;
+            }
+
+            if (!emailPattern.test(email)) {
+                b_error.style.display = "block";
+                b_error.innerHTML = 'Invalid email address format.';
+                return;
+            }
+
+            if (password.length < 8) {
+                b_error.style.display = "block";
+                b_error.innerHTML = 'Password must be at least 8 characters long.';
+                return;
+            }
+
+            const data = {
+                email: email,
+                password: password
+            };
+
+            response_json = "";
+
+            try {
+                response = await fetch("/registerUser?" + new URLSearchParams(data).toString());
+                response_json = await response.json();
+            }
+            catch (error) {
+                console.error(error.message);
+                b_error.style.display = "block";
+                b_error.innerHTML = 'Error during registration.';
+            }
+
+            if (response_json.Status == "Success") {
+                b_success.style.display = "block";
+                b_success.innerHTML = 'Registration successful!';
+                setApiKey(response_json.UUID);
+            } else if (response_json.Status == "Error") {
+                b_error.style.display = "block";
+                b_error.innerHTML = response_json.Message;
+            }
+        }
+
+        document.getElementById('registerButton').addEventListener('click', onRegister);
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
