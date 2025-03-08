@@ -61,9 +61,9 @@ def gpt_request_text_img(key, model, promt, base64_img, img_type):
 
     return response.choices[0].message.content
 
-api_key = get_value_from_cfg_file("/home/goshan9/food-ai/credentials.json", "openai_api_key")
-db_user = get_value_from_cfg_file("/home/goshan9/food-ai/credentials.json", "db_user")
-db_pass = get_value_from_cfg_file("/home/goshan9/food-ai/credentials.json", "db_pass")
+api_key = get_value_from_cfg_file("../../credentials.json", "openai_api_key")
+db_user = get_value_from_cfg_file("../../credentials.json", "db_user")
+db_pass = get_value_from_cfg_file("../../credentials.json", "db_pass")
 
 promt = ("""
 Write me a report in json format about the food on the photo. Provide name, grams, calories per each product.
