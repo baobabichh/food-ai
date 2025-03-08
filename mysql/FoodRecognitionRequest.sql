@@ -7,3 +7,7 @@ CREATE TABLE FoodRecognitionRequests
     Response LONGTEXT,
     CreateTS TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+
+alter table FoodRecognitionRequests add column UserID BIGINT UNSIGNED not null;
+alter table FoodRecognitionRequests add constraint fk_FoodRecognitionRequests_UserID foreign key(UserID) references Users(ID);
