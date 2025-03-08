@@ -1,7 +1,6 @@
 credentials.json
-web_server/config.json
-drogon
-
+libs/drogon
+libs/json
 # General C++ build files
 *.o
 *.obj
