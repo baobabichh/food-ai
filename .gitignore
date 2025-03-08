@@ -1,5 +1,5 @@
 credentials.json
-config.json
+web_server/config.json
 drogon
 
 # General C++ build files
