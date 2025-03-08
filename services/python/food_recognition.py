@@ -61,8 +61,6 @@ def gpt_request_text_img(key, model, promt, base64_img, img_type):
 
     return response.choices[0].message.content
 
-# img_ext, img_base64 = get_image_ext_base64("/home/goshan9/food-ai/test_data/4.jpg")
-
 api_key = get_value_from_cfg_file("/home/goshan9/food-ai/credentials.json", "openai_api_key")
 db_user = get_value_from_cfg_file("/home/goshan9/food-ai/credentials.json", "db_user")
 db_pass = get_value_from_cfg_file("/home/goshan9/food-ai/credentials.json", "db_pass")
@@ -91,11 +89,6 @@ def process_requests():
             cursor = connection.cursor(dictionary=True)
             
             print("Successfully connected to the database")
-
-            # query = f"insert into FoodRecognitionRequests(ImgBase64, ImgType, Status, Response) values (%s, %s, %s, %s)"
-            # values = (img_base64, img_ext, "1", "",)
-            # cursor.execute(query, values)
-            # connection.commit()
 
             query = "select ID, ImgBase64, ImgType FROM FoodRecognitionRequests where Status = 1 limit 100"
             cursor.execute(query)
