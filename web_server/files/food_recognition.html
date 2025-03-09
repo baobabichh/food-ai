@@ -185,7 +185,6 @@
 
 
         function updateState() {
-            console.log("before", curr_state);
             if (curr_state == 0) { // hz
                 b_error.innerHTML = '';
                 b_error.style.display = 'none';
@@ -214,11 +213,9 @@
                 stopProcessingAnimation();
                 clearInterval(process_timeout);
             }
-            console.log("after", curr_state);
         }
 
         async function onProcess() {
-            console.log("onProcess");
             try {
                 const fileData = await getImageAsBase64AndExtension("i_photo");
                 if (fileData.msg !== "Success") {
@@ -230,7 +227,6 @@
 
                 const byteArray = fileData.base64String;
                 const fileExt = fileData.extension;
-                console.log("Image byte array:", byteArray);
 
 
 
@@ -250,7 +246,6 @@
                 const response_json = await response.json();
 
                 if (response_json.Status == "Success") {
-                    console.log('if (response_json.Status == "Success") {');
                     curr_state = 1;
                     err_msg = 'Failed to process.';
                     updateState();
@@ -260,14 +255,12 @@
                     }, 1000);
 
                 } else if (response_json.Status == "Error") {
-                    console.log('} else if (response_json.Status == "Error") {');
                     curr_state = 3;
                     err_msg = 'Failed to process.';
                     updateState();
                 }
             }
             catch (error) {
-                console.log('catch (error) {');
                 curr_state = 3;
                 err_msg = 'Failed to process.';
                 updateState();
@@ -276,7 +269,6 @@
 
 
         async function checkStatus(req_id) {
-            console.log('checkStatus');
             response_json = "";
 
             const data = {
@@ -289,31 +281,23 @@
                 response_json = await response.json();
             }
             catch (error) {
-                console.log('catch (error) {');
                 console.error(error.message);
                 curr_state = 3;
             }
 
-            console.log("response_json.Status-11 ", response_json);
 
             if (response_json.Status == "Success") {
-                console.log('if (response_json.Status == "Success") {');
                 if (response_json.RequestStatus == "Pending") {
-                    console.log("response_json.RequestStatus ", response_json.RequestStatus);
                     curr_state = 1;
                 }
                 else if (response_json.RequestStatus == "Processing") {
-                    console.log("response_json.RequestStatus ", response_json.RequestStatus);
                     curr_state = 2;
                 }
                 else if (response_json.RequestStatus == "Error") {
-                    console.log("response_json.RequestStatus ", response_json.RequestStatus);
-                    console.log(response_json.Message);
                     curr_state = 3;
                     err_msg = 'Failed to process.';
                 }
                 else if (response_json.RequestStatus == "Success") {
-                    console.log("response_json.RequestStatus ", response_json.RequestStatus);
                     curr_state = 4;
                     updateState();
                     clearInterval(process_timeout);
@@ -328,7 +312,6 @@
         }
 
         async function fetchResult(req_id) {
-            console.log('fetchResult');
             response_json = "";
 
             const data = {
@@ -341,19 +324,15 @@
                 response_json = await response.json();
             }
             catch (error) {
-                console.log('catch (error) {');
                 console.error(error.message);
                 curr_state = 3;
             }
 
-            console.log("fetch res Response ", response_json.Response);
 
             if (response_json.Status == "Success") {
-                console.log('if (response_json.Status == "Success") {');
                 curr_state = 0;
                 fillTableWithData(JSON.parse(response_json.Response));
             } else if (response_json.Status == "Error") {
-                console.log('} else if (response_json.Status == "Error") {');
                 curr_state = 3;
             }
 
