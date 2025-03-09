@@ -343,6 +343,9 @@
             const tbody = document.getElementById('result_tbody');
             tbody.innerHTML = '';
 
+            let totalGrams = 0;
+            let totalCalories = 0;
+
             data.products.forEach((product, index) => {
                 const row = document.createElement('tr');
 
@@ -358,13 +361,34 @@
                 const cellGrams = document.createElement('td');
                 cellGrams.textContent = product.grams;
                 row.appendChild(cellGrams);
+                totalGrams += product.grams;
 
                 const cellCalories = document.createElement('td');
                 cellCalories.textContent = product.calories;
                 row.appendChild(cellCalories);
+                totalCalories += product.calories;
 
                 tbody.appendChild(row);
             });
+            const totalRow = document.createElement('tr');
+
+            const totalLabelCell = document.createElement('th');
+            totalLabelCell.scope = 'row';
+            totalLabelCell.textContent = 'Total';
+            totalRow.appendChild(totalLabelCell);
+
+            const emptyCell = document.createElement('td');
+            totalRow.appendChild(emptyCell);
+
+            const totalGramsCell = document.createElement('td');
+            totalGramsCell.textContent = totalGrams;
+            totalRow.appendChild(totalGramsCell);
+
+            const totalCaloriesCell = document.createElement('td');
+            totalCaloriesCell.textContent = totalCalories;
+            totalRow.appendChild(totalCaloriesCell);
+
+            tbody.appendChild(totalRow);
         }
 
         fillTableWithData({ products: [] });
