@@ -28,8 +28,12 @@
     <div class="container full-height">
         <div class="w100">
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-6 a-l">
                     <h1 class="mid_text">Take a photo and get accurate number of calories in a seconds</h1>
+                    <input class="form-control form-control-lg" id="i_photo" type="file" accept="image/*"
+                        onchange="previewImage()">
+                    <button class="btn btn-primary medium-button" id="b_process" onclick="onProcess()">Process</button>
+                    <img id="selectedImage" style="display: none; max-width: 100%; margin-top: 10px; height: 40%;" />
                 </div>
                 <div class="col-md-6">
                     <table class="table" id="result_table">
@@ -42,24 +46,14 @@
                             </tr>
                         </thead>
                         <tbody id="result_tbody">
-                            <!-- Dynamic rows will be inserted here -->
                         </tbody>
                     </table>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <input type="file" id="i_photo" accept="image/*" class="btn btn-primary medium-button">
-                    <button class="btn btn-primary medium-button" id="b_process" onclick="onProcess()">Process</button>
-                </div>
-                <div class="col-md-6">
                     <div class="alert alert-danger" style="display: none;" id="b_error" role="alert">
                     </div>
                     <div class="alert alert-warning" style="display: none;" id="b_warn" role="alert">
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 
@@ -67,6 +61,23 @@
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
     <script>
+        function previewImage() {
+            const fileInput = document.getElementById('i_photo');
+            const selectedImage = document.getElementById('selectedImage');
+
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    selectedImage.src = e.target.result;
+                    selectedImage.style.display = 'block';
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                selectedImage.style.display = 'none';
+                selectedImage.src = '';
+            }
+        }
+
         let process_timeout;
         async function getImageAsBase64AndExtension(inputElementId) {
             return new Promise((resolve, reject) => {
@@ -160,7 +171,6 @@
                 processingMessage.innerHTML = 'Processing' + '.'.repeat(count);
             }, 500);
 
-            // Store intervalId to stop it later
             processingMessage.dataset.intervalId = intervalId;
         }
 
@@ -168,7 +178,7 @@
             b_warn.style.display = 'none';
             const processingMessage = b_warn
             clearInterval(processingMessage.dataset.intervalId);
-            processingMessage.innerHTML = ''; // Clear the message
+            processingMessage.innerHTML = '';
         }
 
         const api_key = getApiKey();
@@ -352,7 +362,7 @@
 
         function fillTableWithData(data) {
             const tbody = document.getElementById('result_tbody');
-            tbody.innerHTML = ''; // Clear any existing content
+            tbody.innerHTML = '';
 
             data.products.forEach((product, index) => {
                 const row = document.createElement('tr');
@@ -378,7 +388,7 @@
             });
         }
 
-        fillTableWithData({products: []});
+        fillTableWithData({ products: [] });
     </script>
 </body>
 

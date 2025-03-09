@@ -8,7 +8,7 @@ cleanup() {
   kill 0
   exit 0
 }
-trap cleanup SIGTERM
+trap cleanup SIGTERM SIGINT
 
 cd ../web_server/build/
 ./web_server &

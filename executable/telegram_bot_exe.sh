@@ -8,7 +8,7 @@ cleanup() {
   kill 0
   exit 0
 }
-trap cleanup SIGTERM
+trap cleanup SIGTERM SIGINT
 
 cd ../services/go/
 go run telegram_bot.go &

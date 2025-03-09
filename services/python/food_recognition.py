@@ -29,7 +29,7 @@ def get_image_ext_base64(image_path):
     return extension, encoded_image
 
 def gpt_request_text_img(key, model, promt, base64_img, img_type):
-    client = OpenAI(api_key=key)
+    client = OpenAI(api_key=key, timeout=10)
     response = client.chat.completions.create(
         model=f"{model}",
         messages=[
@@ -101,19 +101,20 @@ def process_requests():
                 cursor.execute(query, values)
                 connection.commit()
 
-                res_json="none"
+                res_json = "{}"
                 is_error = False
                 try:
-                    res_json = gpt_request_text_img(api_key, "gpt-4o", promt, row["ImgBase64"], row["ImgType"])
-                    is_error = False
-                    print(f"Sucess: {row['ID']}")
-                except Error as e:
-                    print(f"Error: {e}")
+                    if row["ImgBase64"] == "" or row["ImgType"] == "":
+                        res_json = "{}"
+                        is_error = True
+                    else:
+                        res_json = gpt_request_text_img(api_key, "gpt-4o", promt, row["ImgBase64"], row["ImgType"])
+                        is_error = False
+                        print(f"Sucess: {row['ID']}")
+                except Exception as e:
                     res_json = "{}"
                     is_error = True
-                    print(f"Error: {row['ID']}")
-
-                print(res_json)
+                    print(f"Error: {row['ID']}: {e}")
 
                 query = "update FoodRecognitionRequests set Response = %s, Status = %s where id = %s"
                 if is_error:
@@ -123,7 +124,7 @@ def process_requests():
                 cursor.execute(query, values)
                 connection.commit()
 
-    except Error as e:
+    except Exception as e:
         print(f"Error: {e}")
 
     finally:

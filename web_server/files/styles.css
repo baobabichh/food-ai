@@ -43,15 +43,8 @@ body {
     text-align: center;
 }
 
-.center-button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-}
-
 .big-button {
-    height: 110%;
+    margin-top: 10px;
     padding-left: 40px;
     padding-right: 40px;
     font-size: 40px;
@@ -59,7 +52,7 @@ body {
 }
 
 .medium-button {
-    height: 110%;
+    margin-top: 10px;
     padding-left: 30px;
     padding-right: 30px;
     font-size: 30px;
@@ -69,3 +62,9 @@ body {
 .mid_text {
     text-align: left;
 }
+
+.a-l
+{
+    text-align: left;
+}
+
