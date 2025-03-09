@@ -23,8 +23,7 @@ body {
     background-color: #ffffff;
 }
 
-.w100
-{
+.w100 {
     width: 100%;
 }
 
@@ -63,8 +62,11 @@ body {
     text-align: left;
 }
 
-.a-l
-{
+.a-l {
     text-align: left;
 }
 
+
+.nav-text {
+    padding: 10px;
+}
