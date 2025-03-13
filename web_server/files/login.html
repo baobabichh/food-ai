@@ -26,18 +26,19 @@
             <img src="food_ai_logo_new.png" class="d-inline-block align-top logo_img" alt="">
             FoodAI
         </a>
-        <a class="navbar-brand nav-text mr-2"href="login.html">
-            Login
-        </a>
         <div class="ml-auto">
-            <a class="navbar-brand nav-text mr-2"href="login.html">
+            <a class="navbar-brand nav-text" id="nav_login" href="login.html">
                 Login
             </a>
-            <a class="navbar-brand nav-text" href="logout.html">
+            <a class="navbar-brand nav-text" id="nav_logout" href="login.html">
                 Logout
+            </a>
+            <a class="navbar-brand nav-text" id="nav_register" href="register.html">
+                Register
             </a>
         </div>
     </nav>
+    <script src="basic_functions.js"></script>
 
     <div class="container full-height">
         <div class="w100">
@@ -85,36 +86,6 @@
     </div>
 
     <script>
-        function setCookie(name, value, hours) {
-            var expires = "";
-            if (hours) {
-                var date = new Date();
-                date.setTime(date.getTime() + (hours * 60 * 60 * 1000));
-                expires = "; expires=" + date.toUTCString();
-            }
-            document.cookie = name + "=" + (value || "") + expires + "; path=/";
-        }
-        function getCookie(name) {
-            var nameEQ = name + "=";
-            var ca = document.cookie.split(';');
-            for (var i = 0; i < ca.length; i++) {
-                var c = ca[i];
-                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
-                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
-            }
-            return null;
-        }
-
-        function setApiKey(value) {
-            setCookie("apiKey", value, 1);
-        }
-
-        function getApiKey() {
-            return getCookie("apiKey");
-        }
-
-
-
         async function onRegister() {
             const email = document.getElementById('exampleInputEmail1').value;
             const password = document.getElementById('exampleInputPassword1').value;
