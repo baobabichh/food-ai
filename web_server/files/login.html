@@ -22,10 +22,17 @@
 
 <body>
     <nav class="navbar navbar-light bg-light">
-        <a class="navbar-brand logo_text" href="index.html">
-            <img src="food_ai_logo_new.png" class="d-inline-block align-top logo_img" alt="">
-            FoodAI
-        </a>
+        <div class="mr-auto">
+            <a style="color: transparent;" href="index.html">
+                <img src="food_ai_logo_new.png" class="logo_img" alt="">
+            </a>
+            <a class="navbar-brand nav-text" id="nav_food_recognition" href="index.html">
+                Home
+            </a>
+            <a class="navbar-brand nav-text" id="nav_food_recognition" href="food_recognition.html">
+                Food recognition
+            </a>
+        </div>
         <div class="ml-auto">
             <a class="navbar-brand nav-text" id="nav_login" href="login.html">
                 Login
@@ -134,8 +141,9 @@
 
             if (response_json.Status == "Success") {
                 b_success.style.display = "block";
-                b_success.innerHTML = 'Registration successful!';
+                b_success.innerHTML = 'Login successful!';
                 setApiKey(response_json.UUID);
+                updateNavLinks();
             } else if (response_json.Status == "Error") {
                 b_error.style.display = "block";
                 b_error.innerHTML = response_json.Message;

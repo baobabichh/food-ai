@@ -1,4 +1,4 @@
-const good_nav_display = document.getElementById("nav_login").display;
+const good_nav_display = "";
 
 function setCookie(name, value, hours) {
     var expires = "";
@@ -54,7 +54,6 @@ function updateNavLinks() {
 function onLogout() {
     deleteCookie("apiKey");
     updateNavLinks();
-    // Optionally redirect to the login page
     window.location.href = "login.html";
 }
 
@@ -64,3 +63,15 @@ document.getElementById("nav_logout").addEventListener('click', function (event)
 });
 
 updateNavLinks();
+
+if (!getApiKey()) {
+    const url = window.location.href;
+    const urlParts = url.split('/');
+    const fileName = urlParts[urlParts.length - 1] || 'index.html';
+
+    if (fileName === "index.html" || fileName === "login.html" || fileName === "register.html") {
+
+    } else {
+        window.location.href = "index.html";
+    }
+}
