@@ -15,6 +15,16 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
+type Product struct {
+	Name     string `json:"name"`
+	Grams    int    `json:"grams"`
+	Calories int    `json:"calories"`
+}
+
+type ProductsList struct {
+	Products []Product `json:"products"`
+}
+
 func getValueFromJSONFile(filePath string, key string) (interface{}, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -38,6 +48,35 @@ func getValueFromJSONFile(filePath string, key string) (interface{}, error) {
 	}
 
 	return value, nil
+}
+
+func parseAndSummarizeProducts(jsonData string) string {
+	var productsList ProductsList
+	err := json.Unmarshal([]byte(jsonData), &productsList)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Collect results in a string
+	var result string
+
+	// Add each product to the result string
+	for _, product := range productsList.Products {
+		result += fmt.Sprintf("Product: %s, Grams: %d, Calories: %d\n", product.Name, product.Grams, product.Calories)
+	}
+
+	// Calculate totals
+	totalGrams := 0
+	totalCalories := 0
+	for _, product := range productsList.Products {
+		totalGrams += product.Grams
+		totalCalories += product.Calories
+	}
+
+	// Add summary to the result string
+	result += fmt.Sprintf("Summary:\nTotal Grams: %d, Total Calories: %d\n", totalGrams, totalCalories)
+
+	return result
 }
 
 func main() {
@@ -231,10 +270,13 @@ func main() {
 				continue
 			}
 
-			// Ideally, we could do some processing or verification of the result here.
-			log.Printf("Received final result: %s", string(response_t))
+			resultString := parseAndSummarizeProducts(response_t)
 
-			msg := tgbotapi.NewMessage(update.Message.Chat.ID, string(response_t))
+			// Ideally, we could do some processing or verification of the result here.
+			log.Printf("Received final result: %s", string(resultString))
+
+
+			msg := tgbotapi.NewMessage(update.Message.Chat.ID, string(resultString))
 			bot.Send(msg)
 		} else {
 			msg := tgbotapi.NewMessage(update.Message.Chat.ID, "That is not an image!")
