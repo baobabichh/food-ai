@@ -57,15 +57,12 @@ func parseAndSummarizeProducts(jsonData string) string {
 		log.Fatal(err)
 	}
 
-	// Collect results in a string
 	var result string
 
-	// Add each product to the result string
 	for _, product := range productsList.Products {
 		result += fmt.Sprintf("Product: %s, Grams: %d, Calories: %d\n", product.Name, product.Grams, product.Calories)
 	}
 
-	// Calculate totals
 	totalGrams := 0
 	totalCalories := 0
 	for _, product := range productsList.Products {
@@ -73,7 +70,6 @@ func parseAndSummarizeProducts(jsonData string) string {
 		totalCalories += product.Calories
 	}
 
-	// Add summary to the result string
 	result += fmt.Sprintf("Summary:\nTotal Grams: %d, Total Calories: %d\n", totalGrams, totalCalories)
 
 	return result
@@ -105,7 +101,7 @@ func main() {
 
 	for update := range updates {
 		if update.Message != nil && update.Message.Photo != nil {
-			photo := update.Message.Photo[len(update.Message.Photo)-1] // Get highest resolution photo
+			photo := update.Message.Photo[len(update.Message.Photo)-1]
 			file, err := bot.GetFile(tgbotapi.FileConfig{FileID: photo.FileID})
 			if err != nil {
 				log.Println("Error getting file:", err)
@@ -133,14 +129,12 @@ func main() {
 				mimeType = parts[1]
 			}
 
-			/* Step 1: Send to createRequest */
 			endpoint := "http://localhost:5555/createRequest"
 			form := url.Values{}
 			form.Add("uuid", uuid.(string))
 			form.Add("img_base64", base64Str)
 			form.Add("img_type", mimeType)
 
-			// Create a POST request
 			postReq, err := http.NewRequest("POST", endpoint, strings.NewReader(form.Encode()))
 			if err != nil {
 				log.Println("Error creating POST request:", err)
@@ -162,7 +156,6 @@ func main() {
 				continue
 			}
 
-			// Assume the createRequest returns a JSON with a request_id
 			var createResponse map[string]interface{}
 			if err = json.Unmarshal(body, &createResponse); err != nil {
 				log.Println("Error decoding createRequest response:", err)
@@ -177,7 +170,6 @@ func main() {
 
 			is_error := false
 
-			/* Step 2: Check status until complete */
 			checkStatusEndpoint := "http://localhost:5555/checkRequestStatus"
 			for {
 				statusParams := url.Values{}
@@ -224,7 +216,7 @@ func main() {
 					break
 				}
 
-				time.Sleep(2 * time.Second) // Wait and then retry
+				time.Sleep(2 * time.Second)
 			}
 
 			if is_error {
@@ -232,7 +224,6 @@ func main() {
 				continue
 			}
 
-			/* Step 3: Get Request Result */
 			getResultEndpoint := "http://localhost:5555/getRequest"
 			resultParams := url.Values{}
 			resultParams.Add("uuid", uuid.(string))
@@ -272,9 +263,7 @@ func main() {
 
 			resultString := parseAndSummarizeProducts(response_t)
 
-			// Ideally, we could do some processing or verification of the result here.
 			log.Printf("Received final result: %s", string(resultString))
-
 
 			msg := tgbotapi.NewMessage(update.Message.Chat.ID, string(resultString))
 			bot.Send(msg)
